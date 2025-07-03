@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from textblob import TextBlob
 import logging
+import re
+import string
 
 app = FastAPI(
     title="Mood Analyzer API",
@@ -149,8 +151,20 @@ def analyze(req: MoodRequest):
     if not req.text or not req.text.strip():
         logging.warning("Empty text received for analysis.")
         return JSONResponse(status_code=400, content={"error": "Text input is required."})
+    # Remove punctuation for keyword matching
+    text = req.text.strip().lower()
+    text_clean = re.sub(rf"[{re.escape(string.punctuation)}]", " ", text)
     blob = TextBlob(req.text)
     polarity = blob.sentiment.polarity
+    mood_keywords = [
+        "ecstatic", "very happy", "happy", "content", "neutral", "anxious", "sad", "very sad", "angry", "excited", "relaxed", "hopeful", "grateful", "lonely", "nostalgic", "motivated", "inspired", "bored", "confident", "romantic", "jealous", "fearful", "surprised", "shy", "ashamed", "guilty"
+    ]
+    for mood in mood_keywords:
+        # Use regex for whole word/phrase match, ignore case
+        if re.search(rf'\b{re.escape(mood)}\b', text_clean, re.IGNORECASE):
+            music = get_music_suggestion(mood)
+            logging.info(f"Keyword match. Mood: {mood}, Music: {music}, Polarity: {polarity}")
+            return {"emotion": mood, "polarity": polarity, "music": music}
     if polarity > 0.7:
         mood = "ecstatic"
     elif polarity > 0.5:
@@ -162,13 +176,13 @@ def analyze(req: MoodRequest):
     elif polarity == 0:
         mood = "neutral"
     elif polarity > -0.2:
-        mood = "anxious"
+        mood = "unsure"
     elif polarity > -0.5:
         mood = "sad"
     elif polarity > -0.7:
         mood = "very sad"
     elif polarity <= -0.7:
-        mood = "angry"
+        mood = "very sad"
     else:
         mood = "neutral"
     music = get_music_suggestion(mood)

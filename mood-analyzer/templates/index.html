@@ -124,11 +124,33 @@
   <div class="credit">Developed by <b>Sreejith</b> 🧑‍💻</div>
   <script>
     const moodEmojis = {
+      'ecstatic': '🤩',
       'very happy': '😄',
       'happy': '🙂',
+      'content': '😊',
       'neutral': '😐',
+      'unsure': '🤔',
+      'anxious': '😰',
       'sad': '🙁',
-      'very sad': '😢'
+      'very sad': '😢',
+      'angry': '😠',
+      'excited': '🤗',
+      'relaxed': '😌',
+      'hopeful': '🌈',
+      'grateful': '🙏',
+      'lonely': '🥺',
+      'nostalgic': '🕰️',
+      'motivated': '💪',
+      'inspired': '✨',
+      'bored': '🥱',
+      'confident': '😎',
+      'romantic': '😍',
+      'jealous': '😒',
+      'fearful': '😨',
+      'surprised': '😲',
+      'shy': '😳',
+      'ashamed': '😳',
+      'guilty': '😔'
     };
     async function analyzeMood() {
       const text = document.getElementById("textInput").value;
@@ -156,7 +178,10 @@
               `<a href='${song.spotify}' target='_blank'>Spotify</a></li>`
             ).join('') + '</ul>';
           }
-          resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span><br>Polarity: <b>${data.polarity.toFixed(2)}</b><br>Suggested Music:${musicList}`;
+          const polarityDisplay = (typeof data.polarity === 'number')
+            ? `<br>Polarity: <b>${data.polarity.toFixed(2)}</b>`
+            : '';
+          resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span>${polarityDisplay}<br>Suggested Music:${musicList}`;
           mainEmoji.innerText = emoji;
         }
       } catch (e) {
