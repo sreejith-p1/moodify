@@ -4,6 +4,19 @@ Welcome to **Moodify**! This application analyzes your mood from text and sugges
 
 ---
 
+## 🌟 Preview
+
+<!--screenshots using HTML for GitHub markdown -->
+<p align="center">
+  <img src="screenshots/1.JPG" width="350" style="border-radius:12px; margin:0 8px;" />
+  <img src="screenshots/2.JPG" width="350" style="border-radius:12px; margin:0 8px;" />
+  <img src="screenshots/3.JPG" width="350" style="border-radius:12px; margin:0 8px;" />
+  <img src="screenshots/4.JPG" width="350" style="border-radius:12px; margin:0 8px;" />
+  <img src="screenshots/5.JPG" width="350" style="border-radius:12px; margin:0 8px;" />
+</p>
+
+---
+
 ## 🚀 Features
 - **Mood Analysis**: Enter how you feel, and get your mood detected using NLP (TextBlob).
 - **Music Suggestions**: Get curated song recommendations for your mood.
@@ -105,6 +118,7 @@ Welcome to **Moodify**! This application analyzes your mood from text and sugges
 ## 👨‍💻 Developed By
 **Sreejith**  
 - [GitHub](https://github.com/sreejith777)  
+- [Docker Hub](https://hub.docker.com/u/sreejith777)
 
 ---
 
