@@ -103,7 +103,7 @@ Welcome to **Moodify**! This application analyzes your mood from text and sugges
 ---
 
 ## 👨‍💻 Developed By
-**Sreejith**  
+**Sreejith P**  
 - [GitHub](https://github.com/sreejith777)  
 
 ---
