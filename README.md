@@ -117,8 +117,7 @@ Welcome to **Moodify**! This application analyzes your mood from text and sugges
 
 ## 👨‍💻 Developed By
 **Sreejith P**  
-- [GitHub](https://github.com/sreejith777)  
-- [Docker Hub](https://hub.docker.com/u/sreejith777)
+- [GitHub](https://github.com/sreejith-p1/)  
 
 ---
 
