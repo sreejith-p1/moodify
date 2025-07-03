@@ -1,4 +1,4 @@
-uses: actions/upload-artifact@v4name: CI/CD for Mood Analyzer
+name: CI/CD for Mood Analyzer
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
           tags: sreejith777/mood-analyzer:latest
 
       - name: (Optional) Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mood-analyzer
           path: mood-analyzer/
