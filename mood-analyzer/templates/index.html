@@ -125,7 +125,15 @@
           mainEmoji.innerText = "😐";
         } else {
           const emoji = moodEmojis[data.emotion] || "😊";
-          resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span><br>Polarity: <b>${data.polarity.toFixed(2)}</b>`;
+          let musicList = '';
+          if (data.music && data.music.length) {
+            musicList = '<ul>' + data.music.map(song =>
+              `<li>${song.title} ` +
+              `<a href='${song.youtube}' target='_blank'>YouTube</a> | ` +
+              `<a href='${song.spotify}' target='_blank'>Spotify</a></li>`
+            ).join('') + '</ul>';
+          }
+          resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span><br>Polarity: <b>${data.polarity.toFixed(2)}</b><br>Suggested Music:${musicList}`;
           mainEmoji.innerText = emoji;
         }
       } catch (e) {
