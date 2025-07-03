@@ -1,0 +1,99 @@
+# ========================
+# Python Services
+# ========================
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# FastAPI / Uvicorn
+instance/
+.env
+.env.*
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+.Python
+
+# ========================
+# Node / Frontend (if used)
+# ========================
+node_modules/
+dist/
+build/
+.npm/
+package-lock.json
+
+# ========================
+# Docker & Kubernetes
+# ========================
+*.tar
+*.img
+.kube/
+*.swp
+*.bak
+*~
+
+# ========================
+# Terraform
+# ========================
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+terraform.tfvars.json
+.terraform.lock.hcl
+
+# ========================
+# OS / System
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.code-workspace
+
+# ========================
+# Git
+# ========================
+*.orig
+*.rej
+
+# ========================
+# Artifacts / CI/CD
+# ========================
+coverage/
+htmlcov/
+*.coverage
+*.egg-info/
+.tox/
+.pytest_cache/
+__pycache__/
+build/
+dist/
+*.egg
+*.whl
+
+# ========================
+# Logs and temp files
+# ========================
+*.log
+*.tmp
+*.bak
+*.swp
+
+# ========================
+# GitHub / GitLab CI runners
+# ========================
+.cache/
+.gitlab-ci-local/

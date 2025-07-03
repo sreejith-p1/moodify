@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mood-analyzer
+  namespace: moodify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mood-analyzer
+  template:
+    metadata:
+      labels:
+        app: mood-analyzer
+    spec:
+      containers:
+      - name: mood-analyzer
+        image: mood-analyzer:latest
+        ports:
+        - containerPort: 8000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mood-analyzer-service
+  namespace: moodify
+spec:
+  type: NodePort
+  selector:
+    app: mood-analyzer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30001
