@@ -1,4 +1,4 @@
-name: CI/CD for Mood Analyzer
+uses: actions/upload-artifact@v4name: CI/CD for Mood Analyzer
 
 on:
   push:
