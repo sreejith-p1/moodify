@@ -15,9 +15,19 @@ spec:
     spec:
       containers:
       - name: mood-analyzer
-        image: mood-analyzer:latest
+        image: sreejith777/mood-analyzer:latest
         ports:
         - containerPort: 8000
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
 
 ---
 apiVersion: v1
