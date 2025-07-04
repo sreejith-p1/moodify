@@ -119,6 +119,7 @@
     <input type="text" id="textInput" placeholder="Type how you're feeling..." onkeydown="if(event.key==='Enter'){analyzeMood()}" autofocus />
     <br>
     <button onclick="analyzeMood()">Analyze</button>
+    <button id="refreshBtn" style="display:none; margin-left:10px;" onclick="refreshMusic()">🔄 Refresh Music</button>
     <div id="result"></div>
   </div>
   <div class="credit">Developed by <b>Sreejith</b> 🧑‍💻</div>
@@ -156,6 +157,10 @@
       const text = document.getElementById("textInput").value;
       const resultDiv = document.getElementById("result");
       const mainEmoji = document.getElementById("mainEmoji");
+      const refreshBtn = document.getElementById("refreshBtn");
+      refreshBtn.disabled = true;
+      refreshBtn.title = "Get new music suggestions for this mood";
+      refreshBtn.style.opacity = 0.6;
       resultDiv.innerHTML = "Analyzing... <span class='mood-emoji'>🤔</span>";
       mainEmoji.innerText = "🤔";
       try {
@@ -169,25 +174,95 @@
           resultDiv.innerHTML = `<span class='error'>${data.error || 'Something went wrong.'}</span>`;
           mainEmoji.innerText = "😐";
         } else {
-          const emoji = moodEmojis[data.emotion] || "😊";
-          let musicList = '';
-          if (data.music && data.music.length) {
-            musicList = '<ul>' + data.music.map(song =>
-              `<li>${song.title} ` +
-              `<a href='${song.youtube}' target='_blank'>YouTube</a> | ` +
-              `<a href='${song.spotify}' target='_blank'>Spotify</a></li>`
-            ).join('') + '</ul>';
-          }
-          const polarityDisplay = (typeof data.polarity === 'number')
-            ? `<br>Polarity: <b>${data.polarity.toFixed(2)}</b>`
-            : '';
-          resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span>${polarityDisplay}<br>Suggested Music:${musicList}`;
-          mainEmoji.innerText = emoji;
+          renderResult(data, text);
         }
       } catch (e) {
         resultDiv.innerHTML = `<span class='error'>Could not connect to server.</span>`;
         mainEmoji.innerText = "😐";
       }
+      refreshBtn.disabled = false;
+      refreshBtn.style.opacity = 1;
+    }
+    function renderResult(data, text, onlyMusic = false) {
+      const resultDiv = document.getElementById("result");
+      const mainEmoji = document.getElementById("mainEmoji");
+      const emoji = moodEmojis[data.emotion] || "😊";
+      let musicList = '';
+      if (data.music && data.music.length) {
+        musicList = '<ul>' + data.music.map(song =>
+          `<li>${song.title} ` +
+          `<a href='${song.youtube}' target='_blank'>YouTube</a> | ` +
+          `<a href='${song.spotify}' target='_blank'>Spotify</a></li>`
+        ).join('') + '</ul>';
+      }
+      const polarityDisplay = (typeof data.polarity === 'number')
+        ? `<br>Polarity: <b>${data.polarity.toFixed(2)}</b>`
+        : '';
+      if (onlyMusic) {
+        // Only update the music list, not the mood/polarity/emoji
+        const musicHtml = `Suggested Music:${musicList}`;
+        // Replace only the music part in the resultDiv
+        const html = resultDiv.innerHTML.replace(/Suggested Music:[\s\S]*$/m, musicHtml);
+        resultDiv.innerHTML = html;
+      } else {
+        resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span>${polarityDisplay}<br>Suggested Music:${musicList}`;
+        mainEmoji.innerText = emoji;
+      }
+      const refreshBtn = document.getElementById("refreshBtn");
+      refreshBtn.style.display = "inline-block";
+      refreshBtn.disabled = false;
+      refreshBtn.style.opacity = 1;
+    }
+    function setRefreshLoading(isLoading) {
+      const refreshBtn = document.getElementById("refreshBtn");
+      if (isLoading) {
+        refreshBtn.disabled = true;
+        refreshBtn.style.opacity = 0.6;
+        if (!document.getElementById("refreshSpinner")) {
+          const spinner = document.createElement("span");
+          spinner.id = "refreshSpinner";
+          spinner.innerHTML = " <span class='mood-emoji'>🔄</span>";
+          refreshBtn.appendChild(spinner);
+        }
+      } else {
+        refreshBtn.disabled = false;
+        refreshBtn.style.opacity = 1;
+        const spinner = document.getElementById("refreshSpinner");
+        if (spinner) spinner.remove();
+      }
+    }
+    async function refreshMusic() {
+      const text = document.getElementById("textInput").value;
+      setRefreshLoading(true);
+      let timeoutId;
+      let timedOut = false;
+      // Show a warning if backend is slow
+      timeoutId = setTimeout(() => {
+        timedOut = true;
+        const resultDiv = document.getElementById("result");
+        const oldHtml = resultDiv.innerHTML;
+        if (!oldHtml.includes("<span class='error'>")) {
+          resultDiv.innerHTML = oldHtml + "<div class='error'>Taking longer than usual...</div>";
+        }
+      }, 5000);
+      try {
+        const res = await fetch("/analyze?randomize=true", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+        clearTimeout(timeoutId);
+        const data = await res.json();
+        if (res.status !== 200) {
+          document.getElementById("result").innerHTML = `<span class='error'>${data.error || 'Something went wrong.'}</span>`;
+        } else {
+          renderResult(data, text, true);
+        }
+      } catch (e) {
+        clearTimeout(timeoutId);
+        document.getElementById("result").innerHTML = `<span class='error'>Could not connect to server.</span>`;
+      }
+      setRefreshLoading(false);
     }
   </script>
 </body>
