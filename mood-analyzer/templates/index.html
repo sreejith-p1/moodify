@@ -79,25 +79,104 @@
       font-weight: 500;
       transition: color 0.3s;
     }
-    #result ul {
-      list-style: none;
-      padding: 0;
-      margin: 12px 0 0 0;
-      text-align: left;
-      display: inline-block;
+    .music-cards {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      justify-content: center;
+      width: 100%;
+      box-sizing: border-box;
     }
-    #result li {
-      margin-bottom: 8px;
+    .music-card {
       background: #f4f8fb;
-      border-radius: 6px;
-      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(102,166,255,0.10);
+      padding: 16px 24px 12px 24px;
+      min-width: 320px;
+      max-width: 360px;
+      width: 100%;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       font-size: 1em;
-      box-shadow: 0 1px 3px rgba(102,166,255,0.07);
+      transition: box-shadow 0.2s;
+      word-break: break-word;
+      box-sizing: border-box;
     }
-    .mood-emoji {
-      font-size: 2em;
-      margin-left: 8px;
-      vertical-align: middle;
+    .music-card-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #2d3a4b;
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      cursor: pointer;
+      position: relative;
+    }
+    .music-card-title:hover::after {
+      content: attr(data-fulltitle);
+      position: absolute;
+      left: 50%;
+      top: 110%;
+      transform: translateX(-50%);
+      background: #fff;
+      color: #2d3a4b;
+      border: 1px solid #b2bec3;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(102,166,255,0.13);
+      padding: 6px 14px;
+      font-size: 1em;
+      font-weight: 600;
+      white-space: normal;
+      z-index: 10;
+      min-width: 120px;
+      max-width: 90vw;
+      word-break: break-word;
+      pointer-events: none;
+    }
+    .music-card-links {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .music-card-links a {
+      color: #3b5998;
+      text-decoration: underline;
+      font-size: 0.98em;
+      margin: 0 4px;
+      padding: 2px 0;
+      transition: color 0.18s;
+    }
+    .music-card-links a:hover {
+      color: #1a73e8;
+    }
+    @media (max-width: 600px) {
+      .music-cards {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+      .music-card {
+        min-width: unset;
+        max-width: 100%;
+        width: 100%;
+        padding: 14px 10px 12px 10px;
+      }
+      .music-card-title {
+        max-width: 100%;
+      }
     }
     .error {
       color: #e74c3c;
@@ -189,11 +268,15 @@
       const emoji = moodEmojis[data.emotion] || "😊";
       let musicList = '';
       if (data.music && data.music.length) {
-        musicList = '<ul>' + data.music.map(song =>
-          `<li>${song.title} ` +
-          `<a href='${song.youtube}' target='_blank'>YouTube</a> | ` +
-          `<a href='${song.spotify}' target='_blank'>Spotify</a></li>`
-        ).join('') + '</ul>';
+        musicList = `<div class='music-cards'>` + data.music.map(song =>
+          `<div class='music-card'>` +
+            `<div class='music-card-title' data-fulltitle="${song.title}">${song.title}</div>` +
+            `<div class='music-card-links'>` +
+              (song.youtube ? `<a href='${song.youtube}' target='_blank'>YouTube</a>` : '') +
+              (song.spotify ? ` | <a href='${song.spotify}' target='_blank'>Spotify</a>` : '') +
+            `</div>` +
+          `</div>`
+        ).join('') + `</div>`;
       }
       const polarityDisplay = (typeof data.polarity === 'number')
         ? `<br>Polarity: <b>${data.polarity.toFixed(2)}</b>`

@@ -8,6 +8,7 @@ import logging
 import re
 import string
 import random
+from typing import List, Optional
 
 app = FastAPI(
     title="Mood Analyzer API",
@@ -193,15 +194,25 @@ def get_music_suggestion(mood, n=2, randomize=False):
         return random.sample(songs, n)
     return songs[:n]
 
+class MusicSuggestion(BaseModel):
+    title: str
+    youtube: Optional[str] = None
+    spotify: Optional[str] = None
+
 class MoodRequest(BaseModel):
     text: str
+
+class MoodResponse(BaseModel):
+    emotion: str
+    polarity: float
+    music: List[MusicSuggestion]
 
 @app.get("/", response_class=HTMLResponse, tags=["Frontend"])
 def home(request: Request):
     """Serve the homepage HTML."""
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/analyze", tags=["API"])
+@app.post("/analyze", response_model=MoodResponse, tags=["API"])
 def analyze(req: MoodRequest, request: Request):
     """Analyze the mood of the given text and return the emotion, polarity, and music suggestion."""
     randomize = request.query_params.get("randomize", "false").lower() == "true"
@@ -220,7 +231,7 @@ def analyze(req: MoodRequest, request: Request):
         if re.search(rf'\\b{re.escape(mood)}\\b', text_clean, re.IGNORECASE):
             music = get_music_suggestion(mood, n=2, randomize=randomize)
             logging.info(f"Keyword match. Mood: {mood}, Music: {music}, Polarity: {polarity}")
-            return {"emotion": mood, "polarity": polarity, "music": music}
+            return MoodResponse(emotion=mood, polarity=polarity, music=music)
     if polarity > 0.7:
         mood = "ecstatic"
     elif polarity > 0.5:
@@ -243,4 +254,4 @@ def analyze(req: MoodRequest, request: Request):
         mood = "neutral"
     music = get_music_suggestion(mood, n=2, randomize=randomize)
     logging.info(f"Text analyzed. Polarity: {polarity}, Mood: {mood}, Music: {music}")
-    return {"emotion": mood, "polarity": polarity, "music": music}
+    return MoodResponse(emotion=mood, polarity=polarity, music=music)
