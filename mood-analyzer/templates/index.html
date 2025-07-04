@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mood Analyzer</title>
+  <title>MoodiFY</title>
+  <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 42c2.5 2 9.5 2 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -232,6 +233,20 @@
       'ashamed': '😳',
       'guilty': '😔'
     };
+    const moodFaviconSVG = {
+      'ecstatic': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 42c2.5 4 9.5 4 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E",
+      'very happy': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 40c2.5 4 9.5 4 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E",
+      'happy': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 40c2.5 2 9.5 2 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E",
+      'sad': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 44c2.5-2 9.5-2 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E",
+      'very sad': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 46c2.5-4 9.5-4 13 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E",
+      'neutral': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Crect x='24' y='40' width='16' height='2.5' rx='1.2' fill='%232d3a4b'/%3E%3C/svg%3E",
+      'angry': "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle fill='%2366a6ff' cx='32' cy='32' r='32'/%3E%3Ccircle fill='%23fff' cx='32' cy='32' r='28'/%3E%3Ccircle fill='%23f4c542' cx='32' cy='32' r='20'/%3E%3Cellipse fill='%232d3a4b' cx='24' cy='28' rx='2.5' ry='3.5'/%3E%3Cellipse fill='%232d3a4b' cx='40' cy='28' rx='2.5' ry='3.5'/%3E%3Cpath d='M24 44c4-4 11-4 15 0' stroke='%232d3a4b' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
+    };
+    function setFaviconForMood(mood) {
+      const favicon = document.getElementById('dynamic-favicon');
+      let svg = moodFaviconSVG[mood] || moodFaviconSVG['neutral'];
+      favicon.setAttribute('href', `data:image/svg+xml,${svg}`);
+    }
     async function analyzeMood() {
       const text = document.getElementById("textInput").value;
       const resultDiv = document.getElementById("result");

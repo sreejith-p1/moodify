@@ -225,31 +225,45 @@ def analyze(req: MoodRequest, request: Request):
     blob = TextBlob(req.text)
     polarity = blob.sentiment.polarity
     mood_keywords = [
-        "ecstatic", "very happy", "happy", "content", "neutral", "anxious", "sad", "very sad", "angry", "excited", "relaxed", "hopeful", "grateful", "lonely", "nostalgic", "motivated", "inspired", "bored", "confident", "romantic", "jealous", "fearful", "surprised", "shy", "ashamed", "guilty"
+        "ecstatic", "very happy", "happy", "content", "neutral", "anxious", "sad", "very sad", "angry", "excited", "relaxed", "hopeful", "grateful", "lonely", "nostalgic", "motivated", "inspired", "bored", "confident", "romantic", "jealous", "fearful", "surprised", "ashamed", "guilty", "shy"
     ]
+    found_mood = None
     for mood in mood_keywords:
-        if re.search(rf'\\b{re.escape(mood)}\\b', text_clean, re.IGNORECASE):
-            music = get_music_suggestion(mood, n=2, randomize=randomize)
-            logging.info(f"Keyword match. Mood: {mood}, Music: {music}, Polarity: {polarity}")
-            return MoodResponse(emotion=mood, polarity=polarity, music=music)
-    if polarity > 0.7:
+        # Use word boundaries only for multi-word moods, not for single words like 'shy'
+        if ' ' in mood:
+            pattern = rf'\\b{re.escape(mood)}\\b'
+        else:
+            pattern = rf'(?<![a-zA-Z]){re.escape(mood)}(?![a-zA-Z])'
+        if re.search(pattern, text_clean, re.IGNORECASE):
+            found_mood = mood
+            break
+    if found_mood:
+        music = get_music_suggestion(found_mood, n=2, randomize=randomize)
+        logging.info(f"Keyword match. Mood: {found_mood}, Music: {music}, Polarity: {polarity}")
+        return MoodResponse(emotion=found_mood, polarity=polarity, music=music)
+    # Improved polarity mapping
+    if polarity > 0.8:
         mood = "ecstatic"
-    elif polarity > 0.5:
+    elif polarity > 0.6:
         mood = "very happy"
-    elif polarity > 0.2:
+    elif polarity > 0.4:
         mood = "happy"
-    elif polarity > 0:
+    elif polarity > 0.2:
         mood = "content"
-    elif polarity == 0:
+    elif polarity > 0.05:
+        mood = "hopeful"
+    elif polarity > -0.05:
         mood = "neutral"
     elif polarity > -0.2:
         mood = "unsure"
-    elif polarity > -0.5:
+    elif polarity > -0.4:
         mood = "sad"
-    elif polarity > -0.7:
+    elif polarity > -0.6:
         mood = "very sad"
-    elif polarity <= -0.7:
-        mood = "very sad"
+    elif polarity > -0.8:
+        mood = "ashamed"
+    elif polarity <= -0.8:
+        mood = "guilty"
     else:
         mood = "neutral"
     music = get_music_suggestion(mood, n=2, randomize=randomize)
