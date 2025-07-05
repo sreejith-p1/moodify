@@ -14,6 +14,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      transition: background 0.3s, color 0.3s;
     }
     .container {
       background: #fff;
@@ -24,6 +25,7 @@
       width: 100%;
       text-align: center;
       animation: fadeIn 1s;
+      transition: background 0.3s, color 0.3s;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(40px); }
@@ -190,9 +192,79 @@
       text-align: center;
       letter-spacing: 0.5px;
     }
+    body.dark-mode {
+      background: linear-gradient(120deg, #232946 0%, #121629 100%);
+      color: #eaeaea;
+    }
+    body.dark-mode .container {
+      background: #181c2f;
+      color: #eaeaea;
+      box-shadow: 0 8px 32px 0 rgba(20, 22, 40, 0.5);
+    }
+    body.dark-mode h1 {
+      color: #eaeaea;
+    }
+    body.dark-mode #result {
+      color: #eaeaea;
+    }
+    body.dark-mode #result b {
+      color: #8ab4f8;
+    }
+    body.dark-mode #result .mood-emoji {
+      color: #ffe066;
+    }
+    body.dark-mode .music-card {
+      background: #232946;
+      color: #eaeaea;
+      box-shadow: 0 2px 8px rgba(102,166,255,0.08);
+      border: 1px solid #313866;
+    }
+    body.dark-mode .music-card-title {
+      color: #eaeaea;
+    }
+    body.dark-mode .music-card-links a {
+      color: #8ab4f8;
+    }
+    body.dark-mode .music-card-links a:hover {
+      color: #66a6ff;
+    }
+    body.dark-mode .error {
+      color: #ff7675;
+    }
+    body.dark-mode .credit {
+      color: #b2bec3;
+    }
+    /* Toggle button styles */
+    .dark-toggle {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      background: #e3eaf7;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(102,166,255,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      transition: background 0.2s;
+      z-index: 100;
+    }
+    .dark-toggle:hover {
+      background: #d0e2ff;
+    }
+    body.dark-mode .dark-toggle {
+      background: #232946;
+      color: #eaeaea;
+      border: 1px solid #313866;
+    }
   </style>
 </head>
 <body>
+  <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
   <div class="container">
     <div class="emoji" id="mainEmoji">😊</div>
     <h1>Mood Analyzer</h1>
@@ -294,16 +366,16 @@
         ).join('') + `</div>`;
       }
       const polarityDisplay = (typeof data.polarity === 'number')
-        ? `<br>Polarity: <b>${data.polarity.toFixed(2)}</b>`
+        ? `<br><span class='result-label'>Polarity:</span> <b class='result-value'>${data.polarity.toFixed(2)}</b>`
         : '';
       if (onlyMusic) {
         // Only update the music list, not the mood/polarity/emoji
-        const musicHtml = `Suggested Music:${musicList}`;
+        const musicHtml = `<span class='result-label'>Suggested Music:</span>${musicList}`;
         // Replace only the music part in the resultDiv
         const html = resultDiv.innerHTML.replace(/Suggested Music:[\s\S]*$/m, musicHtml);
         resultDiv.innerHTML = html;
       } else {
-        resultDiv.innerHTML = `Mood: <b>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span>${polarityDisplay}<br>Suggested Music:${musicList}`;
+        resultDiv.innerHTML = `<span class='result-label'>Mood:</span> <b class='result-value'>${data.emotion}</b> <span class='mood-emoji'>${emoji}</span>${polarityDisplay}<br><span class='result-label'>Suggested Music:</span>${musicList}`;
         mainEmoji.innerText = emoji;
       }
       const refreshBtn = document.getElementById("refreshBtn");
@@ -361,6 +433,23 @@
         document.getElementById("result").innerHTML = `<span class='error'>Could not connect to server.</span>`;
       }
       setRefreshLoading(false);
+    }
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    darkToggle.onclick = function() {
+      document.body.classList.toggle('dark-mode');
+      if(document.body.classList.contains('dark-mode')) {
+        darkToggle.innerText = '☀️';
+        localStorage.setItem('moodify-dark', '1');
+      } else {
+        darkToggle.innerText = '🌙';
+        localStorage.setItem('moodify-dark', '0');
+      }
+    };
+    // On load, set dark mode if previously enabled
+    if(localStorage.getItem('moodify-dark') === '1') {
+      document.body.classList.add('dark-mode');
+      darkToggle.innerText = '☀️';
     }
   </script>
 </body>
